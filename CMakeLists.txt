@@ -10,13 +10,14 @@ qt_standard_project_setup(REQUIRES 6.10)
 
 qt_add_executable(appDeviceSimulator
     backend/main.cpp
+    backend/datagenerator/datagenerator.h
+    backend/datagenerator/datagenerator.cpp
 )
 
 qt_add_qml_module(appDeviceSimulator
     URI DeviceSimulator
     QML_FILES
         ui/Main.qml
-        RESOURCES .gitignore
 )
 
 target_include_directories(appDeviceSimulator PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/backend)
