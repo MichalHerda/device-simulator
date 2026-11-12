@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
         Qt::QueuedConnection);
     engine.loadFromModule("DeviceSimulator", "Main");
 
-    DataGenerator generator(100, {0, 100}, 100, 5);             // testing purposes
+    DataGenerator generator(100, {-2'147'483'647, 2'147'483'646}, 100, 1'000'000);             // testing purposes
 
     return QGuiApplication::exec();
 }

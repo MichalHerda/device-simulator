@@ -6,18 +6,25 @@ DataGenerator::DataGenerator(int intervalMilliseconds, Range range, int duration
     m_counter(0), m_currentValue(0)
 {
     qDebug() << "DataGenerator initialization: ";
-    qDebug() << "       interval:   ", m_intervalMilliseconds;
-    qDebug() << "       low range:  ", m_range.low;
-    qDebug() << "       high range: ", m_range.high;
-    qDebug() << "       duration:   ", m_duration;
-    qDebug() << "       max step:   ", m_maxStep;
+    qDebug() << "       interval:   " << m_intervalMilliseconds;
+    qDebug() << "       low range:  " << m_range.low;
+    qDebug() << "       high range: " << m_range.high;
+    qDebug() << "       duration:   " << m_duration;
+    qDebug() << "       max step:   " << m_maxStep;
+
+    qDebug() << "numeric upper int limit" << std::numeric_limits<int>::max();
+    qDebug() << "numeric lower int limit" << std::numeric_limits<int>::min();
+
+    if (m_range.high > std::numeric_limits<int>::max()) {
+        throw std::invalid_argument("Range high exceeds supported limit");
+    }
+
+    if (m_range.low < std::numeric_limits<int>::min()) {
+        throw std::invalid_argument("Range low exceeds supported limit");
+    }
 
     if (m_range.low > m_range.high) {
         throw std::invalid_argument("Range: low cannot be greater than high");
-    }
-
-    if (m_range.high == std::numeric_limits<int>::max()) {
-        throw std::invalid_argument("Range high exceeds supported limit");
     }
 
     if (m_intervalMilliseconds <= 0) {
@@ -59,25 +66,28 @@ void DataGenerator::stop()
 
 void DataGenerator::generateData()
 {
-    int low;
-    int high;
+    // quint64 is used for QRandomGenerator requirements
+    qint64 low  = m_range.low;
+    qint64 high = m_range.high;
 
-    if(m_counter == 0) {
-        low = m_range.low;
-        high = m_range.high;
+    if (m_counter != 0) {
+        low  = qMax<qint64>(low,  static_cast<qint64>(m_currentValue) - m_maxStep);
+        high = qMin<qint64>(high, static_cast<qint64>(m_currentValue) + m_maxStep);
     }
-    else {
-        low = qMax(m_range.low, m_currentValue - m_maxStep);
-        high = qMin(m_range.high, m_currentValue + m_maxStep);
-    }
-    m_currentValue = QRandomGenerator::global()->bounded(low, high + 1);
-    qDebug() << m_counter << ", draw: " << m_currentValue;
+
+    const qint64 span = high - low + 1;
+
+    qint64 value = low + static_cast<qint64>(QRandomGenerator::global()->bounded(static_cast<quint32>(span)));
+
+    m_currentValue = static_cast<int>(value);
+    qDebug() << m_counter << "draw: " << m_currentValue;
     m_counter++;
 
-    if(m_counter >= m_duration) {
+    if (m_counter >= m_duration) {
         m_timer.stop();
         m_counter = 0;
     }
 
     emit dataGenerated(m_currentValue);
 }
+

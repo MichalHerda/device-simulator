@@ -34,7 +34,7 @@ private slots:
 private:
     int m_intervalMilliseconds;
     Range m_range;
-    int m_duration;
+    int m_duration;                     // the amount of generated integers
     int m_maxStep;
 
     QTimer m_timer;
