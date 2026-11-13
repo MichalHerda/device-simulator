@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "backend/datagenerator/datagenerator.h"
+//#include "backend/device/device.h"
 
 int main(int argc, char *argv[])
 {

@@ -18,9 +18,13 @@ qt_add_qml_module(appDeviceSimulator
     URI DeviceSimulator
     QML_FILES
         ui/Main.qml
+    SOURCES
+        backend/device/device.h
+        backend/device/device.cpp
 )
 
 target_include_directories(appDeviceSimulator PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/backend)
+target_include_directories(appDeviceSimulator PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/backend/device)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
